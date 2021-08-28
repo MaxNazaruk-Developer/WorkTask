@@ -1,23 +1,55 @@
-import { LightningElement, wire } from 'lwc';
-import FIRST_NAME from '@salesforce/schema/Contact.FirstName';
-import LAST_NAME from '@salesforce/schema/Contact.LastName';
-import EMAIL from '@salesforce/schema/Contact.Email';
-import ACCOUNT from '@salesforce/schema/Contact.AccountId';
-import MOBAIL_PHONE from '@salesforce/schema/Contact.MobilePhone';
-import CREATED_DATE from '@salesforce/schema/Contact.CreatedDate';
+import { LightningElement, wire, track } from 'lwc';
 import getContacts from '@salesforce/apex/ContactController.getContacts';
 
-
 const COLUMNS = [
-    { label: 'First Name', fieldName: FIRST_NAME.fieldApiName, type: 'name' },
-    { label: 'Last Name', fieldName: LAST_NAME.fieldApiName, type: '	name' },
-    { label: 'Email', fieldName: EMAIL.fieldApiName, type: 'email' },
-    { label: 'Account Name', fieldName: ACCOUNT.fieldApiName, type: 'Lookup(Account)' },
-    { label: 'Mobile Phone', fieldName: MOBAIL_PHONE.fieldApiName, type: 'phone' },
-    { label: 'Created Date', fieldName: CREATED_DATE.fieldApiName, type: 'date' }
+    { label: 'First Name', fieldName: 'FirstName' },
+    { label: 'Last Name', fieldName: 'LastName' },
+    { label: 'Email', fieldName: 'Email', type: 'email' },
+    { label: 'Account', fieldName: 'LinkAcc', type: 'url', typeAttributes: {label: {fieldName: 'AccountName'}}},
+    { label: 'Mobile Phone', fieldName: 'MobilePhone', type: 'phone' },
+    { 
+        label: 'Created Date', fieldName: 'CreatedDate', type: 'date', typeAttributes: {
+            month: "2-digit",
+            day: "2-digit",
+            year: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        } 
+    }
 ];
 export default class ContactList extends LightningElement {
-    columns = COLUMNS;
+    @track columns = COLUMNS;
+    @track data = [];
+    //seachName;
     @wire(getContacts)
-    accounts;
+    
+    contactData({error, data}) {
+
+        if (data) {
+            let currentData = [];
+            data.forEach( row => {
+                let rowData = {};
+                rowData.LastName = row.LastName;
+                rowData.FirstName = row.FirstName;
+                rowData.LinkAcc = '/' + row.AccountId;
+                if (row.Account) {
+                    rowData.AccountName = row.Account.Name;
+                }
+                rowData.Email = row.Email;
+                rowData.MobilePhone = row.MobilePhone;
+                rowData.CreatedDate = row.CreatedDate;
+                currentData.push(rowData);
+            });
+            this.data = currentData;
+        } else if (error) {
+            
+            this.error = error;
+            this.data = undefined;
+        }
+    }
+    seachContact() {
+        data = this.detail;
+        //this.contactData(this.data);
+    }
+    
 }
