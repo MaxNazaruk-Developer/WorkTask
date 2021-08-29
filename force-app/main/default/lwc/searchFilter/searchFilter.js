@@ -7,39 +7,31 @@ export default class SearchFilter extends LightningElement {
 
     searchId(event) {
 
-        this.searchValue = event.target.value;
-        //this.dispatchEvent(new CustomEvent('search', {detail: this.searchValue}))
+        this.searchValue = event.target.value;        
     }
 
     searchContact(){
-               
-        if (this.searchValue !== '') {
-            getContacts({
-                searchKey:this.searchValue
-            })
-            .then(result=>{
-                this.records = result;
-            })
-            .catch(error => {
-                    
-                const event = new ShowToastEvent({
-                    title: 'Error',
-                    variant: 'error',
-                    message: error.body.message,
-                });
-                this.dispatchEvent(event);
-                  
-                this.records = null;
-        });
-        } else {
-            
+        console.log('searchContact: ' + this.searchValue);       
+        
+        getContacts({
+            searchKey:this.searchValue
+        })
+        .then(result=>{
+            this.records = result;
+            console.log('records: ' + result);
+            this.dispatchEvent(new CustomEvent('filter', {detail: this.records}))                  
+        })            
+        .catch(error => {
+                
             const event = new ShowToastEvent({
+                title: 'Error',
                 variant: 'error',
-                message: 'Search text missing..',
+                message: error.body.message,
             });
             this.dispatchEvent(event);
-        }
-        this.dispatchEvent(new CustomEvent('filter', {detail: this.records}))
+                
+            this.records = null;
+        });       
     }
 }
 

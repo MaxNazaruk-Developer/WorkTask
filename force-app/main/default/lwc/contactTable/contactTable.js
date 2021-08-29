@@ -20,7 +20,7 @@ const COLUMNS = [
 export default class ContactList extends LightningElement {
     @track columns = COLUMNS;
     @track data = [];
-    //seachName;
+    
     @wire(getContacts)
     
     contactData({error, data}) {
@@ -47,9 +47,15 @@ export default class ContactList extends LightningElement {
             this.data = undefined;
         }
     }
-    seachContact() {
-        data = this.detail;
-        //this.contactData(this.data);
+    seachContact(event) {
+        this.data = event.detail;
+        console.log('eveny:' + event.detail);
+        let resultData = {
+            error: null,
+            data: this.data
+        }     
+        
+        this.contactData(resultData);
     }
     
 }
