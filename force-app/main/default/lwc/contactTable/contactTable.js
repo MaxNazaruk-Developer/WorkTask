@@ -27,20 +27,29 @@ export default class ContactList extends LightningElement {
 
         if (data) {
             let currentData = [];
+            
             data.forEach( row => {
-                let rowData = {};
+                let rowData = {};                
+                /*rowData={
+                    ...row,
+                    LinkAcc:'/' + row.AccountId,                    
+                    //AccountName: data.Account.Name,
+                };*/                
                 rowData.LastName = row.LastName;
                 rowData.FirstName = row.FirstName;
+                if (row.AccountId) {
                 rowData.LinkAcc = '/' + row.AccountId;
+                }
                 if (row.Account) {
                     rowData.AccountName = row.Account.Name;
-                }
+                } 
                 rowData.Email = row.Email;
                 rowData.MobilePhone = row.MobilePhone;
                 rowData.CreatedDate = row.CreatedDate;
-                currentData.push(rowData);
+                currentData.push(rowData);                
             });
             this.data = currentData;
+            
         } else if (error) {
             
             this.error = error;

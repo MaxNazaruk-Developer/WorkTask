@@ -6,23 +6,18 @@ export default class SearchFilter extends LightningElement {
     searchValue = '';
 
     searchId(event) {
-
         this.searchValue = event.target.value;        
     }
 
-    searchContact(){
-        console.log('searchContact: ' + this.searchValue);       
-        
+    searchContact(){       
         getContacts({
             searchKey:this.searchValue
         })
         .then(result=>{
-            this.records = result;
-            console.log('records: ' + result);
+            this.records = result;            
             this.dispatchEvent(new CustomEvent('filter', {detail: this.records}))                  
         })            
-        .catch(error => {
-                
+        .catch(error => {                
             const event = new ShowToastEvent({
                 title: 'Error',
                 variant: 'error',
@@ -30,7 +25,7 @@ export default class SearchFilter extends LightningElement {
             });
             this.dispatchEvent(event);
                 
-            this.records = null;
+            this.records = [];
         });       
     }
 }

@@ -2,11 +2,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
     width: fit-content;
 }
 .input{
-    width: 15rem;    
+    width: 250px;    
 }
 .button{
     margin-top: 24px;

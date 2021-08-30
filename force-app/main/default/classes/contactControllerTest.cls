@@ -20,18 +20,30 @@ public with sharing class contactControllerTest {
 
     @IsTest
     static void getContactsTest(){
-        List<Contact> getContactsController = contactController.getContacts(null);
-        List<Contact> getOneContactsController = contactController.getContacts('FirstNameContact');
+        Test.startTest();
+        List<Contact> getContactsController = contactController.getContacts('');
+        Test.stopTest();
+
         List<Contact> allContacts = [
             SELECT LastName, FirstName, CreatedDate 
             FROM Contact
         ];
+        
+        System.assertEquals(allContacts, getContactsController);
+        
+    }
+
+    @IsTest
+    static void getOneContactTest(){
+        Test.startTest();
+        List<Contact> getOneContactsController = contactController.getContacts('FirstNameContact');
+        Test.stopTest();
+
         List<Contact> oneContacts = [
             SELECT LastName, FirstName, CreatedDate 
             FROM Contact
             WHERE FirstName = 'FirstNameContact'
         ];
-        System.assertEquals(allContacts, getContactsController);
         System.assertEquals(oneContacts, getOneContactsController);
     }
     
