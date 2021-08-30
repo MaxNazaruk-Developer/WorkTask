@@ -1,0 +1,13 @@
+.head{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    width: fit-content;
+}
+.input{
+    width: 250px;    
+}
+.button{
+    margin-top: 24px;
+}

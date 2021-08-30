@@ -1,0 +1,10 @@
+<template>
+    <c-search-filter onfilter={seachContact}></c-search-filter>       
+    <lightning-datatable hide-checkbox-column
+        key-field="Id"
+        data={data}
+        columns={columns}
+        >
+    </lightning-datatable>    
+    
+</template>
