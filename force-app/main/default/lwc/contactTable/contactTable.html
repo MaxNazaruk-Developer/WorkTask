@@ -1,5 +1,6 @@
 <template>
-    <c-search-filter onfilter={seachContact}></c-search-filter>       
+    <c-search-filter onfilter={seachContact}></c-search-filter>
+    <c-modal-window-new-contact onrefrech={refrech}></c-modal-window-new-contact>       
     <lightning-datatable hide-checkbox-column
         key-field="Id"
         data={data}

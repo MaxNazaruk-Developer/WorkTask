@@ -1,5 +1,6 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 import getContacts from '@salesforce/apex/ContactController.getContacts';
+import {refreshApex} from '@salesforce/apex';
 
 const COLUMNS = [
     { label: 'First Name', fieldName: 'FirstName' },
@@ -21,33 +22,25 @@ export default class ContactList extends LightningElement {
     @track columns = COLUMNS;
     @track data = [];
     
-    @wire(getContacts)
-    
-    contactData({error, data}) {
+    refrechTable;
 
+    @wire(getContacts)
+
+    contactData(result) {
+        this.refrechTable = result;
+        const {data,error} = result;
         if (data) {
             let currentData = [];
             
             data.forEach( row => {
                 let rowData = {};                
-                /*rowData={
+                rowData={
                     ...row,
-                    LinkAcc:'/' + row.AccountId,                    
-                    //AccountName: data.Account.Name,
-                };*/                
-                rowData.LastName = row.LastName;
-                rowData.FirstName = row.FirstName;
-                if (row.AccountId) {
-                rowData.LinkAcc = '/' + row.AccountId;
-                }
-                if (row.Account) {
-                    rowData.AccountName = row.Account.Name;
-                } 
-                rowData.Email = row.Email;
-                rowData.MobilePhone = row.MobilePhone;
-                rowData.CreatedDate = row.CreatedDate;
+                    LinkAcc : row.AccountId ? '/' + row.AccountId : "",
+                    AccountName : row.AccountId ? row.Account.Name : ""};              
                 currentData.push(rowData);                
             });
+
             this.data = currentData;
             
         } else if (error) {
@@ -55,16 +48,21 @@ export default class ContactList extends LightningElement {
             this.error = error;
             this.data = undefined;
         }
+         
     }
+    
+    refrech(){
+        return refreshApex(this.refrechTable);
+    }
+
     seachContact(event) {
-        this.data = event.detail;
-        console.log('eveny:' + event.detail);
+        this.data = event.detail;        
         let resultData = {
             error: null,
             data: this.data
         }     
         
         this.contactData(resultData);
-    }
-    
+    }    
+   
 }

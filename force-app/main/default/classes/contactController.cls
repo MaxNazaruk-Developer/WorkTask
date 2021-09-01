@@ -4,7 +4,8 @@ public with sharing class contactController {
         if (String.isBlank(searchKey)) {  
             return [
                 SELECT FirstName, LastName, Email, Account.Name, AccountId, MobilePhone, CreatedDate 
-                FROM Contact            
+                FROM Contact
+                ORDER BY CreatedDate DESC           
             ];
         } else {
             String searchName = '%' + searchKey + '%';
@@ -12,7 +13,8 @@ public with sharing class contactController {
                 SELECT FirstName, LastName, Email, Account.Name, AccountId, MobilePhone, CreatedDate 
                 FROM Contact 
                 WHERE FirstName
-                LIKE :searchName           
+                LIKE :searchName
+                ORDER BY CreatedDate DESC         
             ];
         }
     }
