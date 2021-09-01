@@ -18,4 +18,23 @@ public with sharing class contactController {
             ];
         }
     }
+    @AuraEnabled
+    public static void deleteContact(List<Id> idContactsDelete) {
+        List<Contact> listContactDelete = new List<Contact>();
+        for (Id idContact : idContactsDelete) {
+            Contact listSenchContacts = [
+                SELECT Id 
+                FROM Contact
+                WHERE Id =: idContact
+                LIMIT 1
+            ];
+            listContactDelete.add(listSenchContacts);
+        }
+        try {
+            delete listContactDelete;
+        } catch (Exception e) {
+            
+        }       
+    }
+    
 }
