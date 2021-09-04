@@ -7,7 +7,7 @@ public with sharing class contactController {
                 FROM Contact
                 ORDER BY CreatedDate DESC           
             ];
-        } else {
+        } else {                     
             String searchName = '%' + searchKey + '%';
             return [
                 SELECT FirstName, LastName, Email, Account.Name, AccountId, MobilePhone, CreatedDate 
@@ -15,7 +15,7 @@ public with sharing class contactController {
                 WHERE FirstName
                 LIKE :searchName
                 ORDER BY CreatedDate DESC         
-            ];
+            ];         
         }
     }
     @AuraEnabled

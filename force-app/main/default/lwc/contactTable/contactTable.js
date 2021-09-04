@@ -33,9 +33,9 @@ export default class ContactList extends LightningElement {
     @api recordId;      
     @track originalMessage;    
     @track selectedRow;
-    refrechTable;
+    refrechTable;    
 
-    @wire(getContacts)
+    @wire(getContacts) 
     contactData(result) {
         this.refrechTable = result;
         const {data,error} = result;
