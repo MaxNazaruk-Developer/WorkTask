@@ -8,22 +8,32 @@ public with sharing class inlineEditTableController {
     }
 
     @AuraEnabled
-    public static void deleteAccount(List<Id> idAccountDelete) {
-        List<Account> listAccountDelete = new List<Account>();
-        for (Id idAccount : idAccountDelete) {
-            Account listSenchAccount = [
+    public static String deleteAccount(List<Id> idAccountDelete) {        
+        List<Account> lstAccToDelete = new List<Account>();
+        String respons = '';      
+        for (Id idAcc : idAccountDelete) {
+            lstAccToDelete.add([
                 SELECT Id 
                 FROM Account
-                WHERE Id =: idAccount
+                WHERE Id =: idAcc
                 LIMIT 1
-            ];
-            listAccountDelete.add(listSenchAccount);
+            ]);
         }
-        try {
-            delete listAccountDelete;
-        } catch (Exception e) {
-            
-        }       
+        try {           
+            delete lstAccToDelete;                   
+        } catch (Exception ex) {            
+            respons = ex.getMessage();                             
+        }
+        return respons;            
     }
     
+    @AuraEnabled
+    public static void saveDraftValues(Object data) {
+        List<Account> listOfAccounts = (List<Account>) JSON.deserialize(
+                JSON.serialize(data),
+                List<Account>.class
+        );
+
+        update listOfAccounts;
+    }  
 }
