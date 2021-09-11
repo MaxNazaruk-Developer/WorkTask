@@ -46,5 +46,29 @@ public with sharing class contactControllerTest {
         ];
         System.assertEquals(oneContacts, getOneContactsController);
     }
+
+    @IsTest
+    static void deleteContactTest() {
+        Contact testContact = [
+            SELECT Id 
+            FROM Contact
+            WHERE LastName = 'OneContact'
+            LIMIT 1
+            ];
+       
+        List<Id> idtestContact = New List<Id>();
+        idtestContact.add(testContact.Id);
+        
+        Test.startTest();
+        contactController.deleteContact(idtestContact);
+        Test.stopTest();
+
+        List<Contact> nullContact = [
+            SELECT Id 
+            FROM Contact
+            WHERE LastName = 'OneContact'            
+            ];
+        System.assertEquals(0, nullContact.size());
+    }
     
 }

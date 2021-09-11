@@ -4,16 +4,37 @@ public with sharing class contactController {
         if (String.isBlank(searchKey)) {  
             return [
                 SELECT FirstName, LastName, Email, Account.Name, AccountId, MobilePhone, CreatedDate 
-                FROM Contact            
+                FROM Contact
+                ORDER BY CreatedDate DESC           
             ];
-        } else {
+        } else {                     
             String searchName = '%' + searchKey + '%';
             return [
                 SELECT FirstName, LastName, Email, Account.Name, AccountId, MobilePhone, CreatedDate 
                 FROM Contact 
                 WHERE FirstName
-                LIKE :searchName           
-            ];
+                LIKE :searchName
+                ORDER BY CreatedDate DESC         
+            ];         
         }
     }
+    @AuraEnabled
+    public static void deleteContact(List<Id> idContactsDelete) {
+        List<Contact> listContactDelete = new List<Contact>();
+        for (Id idContact : idContactsDelete) {
+            Contact listSenchContacts = [
+                SELECT Id 
+                FROM Contact
+                WHERE Id =: idContact
+                LIMIT 1
+            ];
+            listContactDelete.add(listSenchContacts);
+        }
+        try {
+            delete listContactDelete;
+        } catch (Exception e) {
+            
+        }       
+    }
+    
 }

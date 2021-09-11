@@ -1,0 +1,26 @@
+<template>    
+    <lightning-card title="Account Inline Table">
+        <div onitemregister={handleItemRegister}>
+            <template if:true={showHidePencil}>
+                <c-my-custom-type class="slds-max-medium-table_stacked" oncellchange={handleCellChange}
+                                     onvaluechange={picklistValueChange} data={data} columns={columns}
+                                     show-row-number-column="false"
+                                     key-field="Id" draft-values={draftValues} onsave={handleSave} data-record="Id"
+                                     onedit={picklistEdit} onrowaction={handleRowAction}
+                                     hide-checkbox-column="true" oncancel={cancelInlineEdit}>
+                </c-my-custom-type>
+            </template>
+        </div>
+        <div onitemregister={handleItemRegister}>
+            <template if:false={showHidePencil}>
+                <c-my-custom-type class="slds-max-medium-table_stacked" onvaluechange={picklistValueChange}
+                                     oncellchange={handleCellChange} data={data} columns={columnsNon}
+                                     show-row-number-column="false"
+                                     key-field="Id" draft-values={draftValues} onsave={handleSave} data-record="Id"
+                                     onedit={picklistEdit} onrowaction={handleRowAction}
+                                     hide-checkbox-column="true" oncancel={cancelInlineEdit}>
+                </c-my-custom-type>
+            </template>
+        </div>        
+    </lightning-card>
+</template>

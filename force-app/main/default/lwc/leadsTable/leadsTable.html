@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="Datatable Leads">
+        <div class="slds-m-around_medium">
+            <template if:true={data}>
+                <lightning-datatable 
+                    hide-checkbox-column                   
+                    key-field="Id"
+                    data={data}
+                    columns={columns}
+                    oncellchange={handleSave}
+                    draft-values={draftValues}>                                       
+                </lightning-datatable>
+            </template>                    
+        </div>
+    </lightning-card>
+</template>
