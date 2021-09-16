@@ -28,12 +28,20 @@ public with sharing class inlineEditTableController {
     }
     
     @AuraEnabled
-    public static void saveDraftValues(Object data) {
+    public static String saveDraftValues(Object data) {
+        System.debug(data);
         List<Account> listOfAccounts = (List<Account>) JSON.deserialize(
                 JSON.serialize(data),
                 List<Account>.class
         );
-
-        update listOfAccounts;
+        String responsSave = '';
+        System.debug(listofAccounts); 
+        try {
+            update listOfAccounts;        
+        } catch (Exception ex) {            
+            responsSave = ex.getMessage();                             
+        }
+        return responsSave; 
+        
     }  
 }

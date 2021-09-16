@@ -1,0 +1,173 @@
+<template>
+    <div class="slds-table_edit_container slds-is-relative">
+        <table aria-multiselectable="true" class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols" role="grid" style="width:66.75rem" aria-label="Example default inline edit table with cell focused">
+            <thead>
+              <!-- Это не пятое задание, не надо прям подробно передавать весь стиль оригинальной таблицы у SF -->
+                <tr class="slds-line-height_reset">
+                    <th aria-label="Account Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Account Name">Account Name</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                                            
+                        <div class="slds-resizable">
+                            <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-3788" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                        </div>                      
+                    </th>
+                    <th aria-label="Stage" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Stage">Rating</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                        
+                    </th>
+                    <th aria-label="Stage" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Stage">Delete</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                        
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={dataTable} for:item="Account">
+                  <!-- вот тут темплейт мо;но выделить в отдельный компонент и перенести весь код туда. это будет читаться проще и не слишком загромождать код.  -->
+                <!-- вот это твой ряд, у него есть key= Accound.id (айди у аккаунта ВСЕГДА уникальное значение) -->
+<!-- однако проблема в том что ты не можешь обратиться конкретно к значению поля кей. И потому тут будет самое то сделать дополнительную переменную дата-айди (например) в которой будешь хранить значение айди для нужды кода. -->
+                <tr key={Account.Id} data-accountid={Account.Id} aria-selected="false" class="slds-hint-parent">                                        
+                    <td class="slds-cell-edit slds-table_edit" role="gridcell">
+                        <span if:false={Account.editRow} class="slds-grid slds-grid_align-spread">
+                          <span class="slds-truncate" title="Acme">{Account.Name}</span>
+                          <button if:true={showEditButton} onclick={clickEdit} data-value={Account.Name} data-id={Account.Id} data-field='Name' class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
+                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
+                                <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                            </svg>                            
+                          </button>                                                  
+                        </span>
+                        <div if:true={Account.editRow} class="slds-form-element">
+                            <label class="slds-form-element__label" for="text-input-id-184">Input Label</label>
+                            <div class="slds-form-element__control">
+                              <input type="text" onkeyup={inputDisplay} placeholder="" class="slds-input" value={inputValue} />
+                            </div>
+                        </div>
+                    </td>
+                    <td class="slds-cell-edit" role="gridcell">
+                        <span if:false={Account.showPickList} class="slds-grid slds-grid_align-spread">
+                          <span class="slds-truncate" title="Acme">{Account.Rating}</span>
+                          <!-- вот эта строчка - твой таргет ивента. смотри в js -->
+                          <button if:true={showEditButton} data-value={Account.Rating} data-id={Account.Id} data-field='Rating' onclick={clickEditRating} class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
+                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
+                                <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>                                
+                            </svg>                           
+                          </button>
+                        </span>
+                        <div if:true={Account.showPickList} class="slds-form-element">
+                          <label class="slds-form-element__label" for="select-01">Select Label</label>
+                          <div class="slds-form-element__control">
+                            <div class="slds-select_container">
+                              <!-- у -->
+                              <select class="slds-select" >
+                                <option value="">-None-</option>
+                                <option value="Hot">Hot</option>
+                                <option value="Warm">Warm</option>
+                                <option value="Cold">Cold</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <!--<c-pick-list-for-custom-data-table
+                        showpicklist={Account.showPickList}
+                        valuefieldrating={Account.Rating}
+                        onselected={clickPickList}>
+                        </c-pick-list-for-custom-data-table>-->
+                        <!--<div if:true={Account.showPickList} class="slds-form-element">                            
+                            <div class="slds-form-element__control">
+                              <div class="slds-combobox_container slds-size_small">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                                  <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                    <button type="button" class="slds-input_faux slds-combobox__input slds-has-focus slds-combobox__input-value" aria-labelledby="combobox-label-id-27 combobox-id-4-selected-value" aria-controls="listbox-id-4" aria-expanded="true"
+                                      aria-haspopup="listbox" aria-activedescendant="option1">
+                                      <span class="slds-truncate" >{Account.Rating}</span>
+                                    </button>
+                                    <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                      <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div aria-checked="true" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected" role="option">
+                                          <span class="slds-media__figure slds-listbox__option-icon">
+                                            <span class="slds-icon_container slds-icon-utility-check slds-current-color">
+                                              <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                                              </svg>
+                                            </span>
+                                          </span>
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Option A">{valuesPickList.hot}</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                          <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Option B">{valuesPickList.warm}</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                          <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Option ABCDEFGHIJKLMNOPQRSTUVWXYZ">{valuesPickList.cold}</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>-->
+                    </td>
+                    <td class="slds-cell-edit" role="gridcell">
+                        <span class="slds-grid slds-grid_align-spread">
+                            <button onclick={deleteAccount} data-id={Account.Id} class="slds-button slds-button_text-destructive">Delete</button>                         
+                        </span>
+                    </td>                    
+                </tr>
+                </template>
+            </tbody>            
+        </table>
+        <div if:true={showButtonCancelSave} class="buttonfield">
+            <button class="slds-button slds-button_outline-brand" onclick={closeInput}>Cansel</button>
+            <button class="slds-button slds-button_success" onclick={saveInput}>Save</button>
+        </div>
+    </div>
+</template>
