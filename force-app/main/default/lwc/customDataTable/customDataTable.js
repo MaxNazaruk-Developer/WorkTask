@@ -39,8 +39,7 @@ export default class CustomDataTable extends LightningElement {
                 };              
                     currentData.push(rowData);                
             });
-            this.dataTable = currentData;                       
-            console.log(this.dataTable,'dataTable');                                  
+            this.dataTable = currentData;                                              
         } else if (error) {                       
             this.error = error;
             this.dataTable = undefined;
@@ -54,9 +53,9 @@ export default class CustomDataTable extends LightningElement {
 
         // если же ты хочешь найти другой обьект, который находится рядом с кнопкой, тебе нужно сделать указатель, по которому ты сможешь определить, является ли тот тег и твоя сработанная кнопка связаны чем-то
         // например - они находятся в одном ряду.
-        this.inputId = event.target.dataset.id;
-        this.inputValue = event.target.dataset.value;
-        this.inputfield = event.target.dataset.field;
+        this.inputId = event.detail.accountIdRow;
+        this.inputValue = event.detail.accountRating;
+        this.inputfield = event.detail.valueField;
         // и вот тут если ты, допустим, знаешь айди и знаешь в каком ряде это айди встречается, то ты можешь составить запрос селектора для того чтобы получить конкретный тег, в твоем случае - опцию в селекте
         // выглядит это примерно так: this.template.querySelector('tr[data-....=""] option[value=""]') - вот тут ты указываешь что ищешь тег тр в котором есть параметр дата-"твоеимятут" = твой айди, допустим и внутри этого тега ищешь тег опшн в котором значение равно тому что тебе надо.
         // айди же в 57 строке ты получаешь правильно.        
@@ -78,10 +77,10 @@ export default class CustomDataTable extends LightningElement {
         console.log('selected');
         //var arrTegOptions = document.body.querySelectorAll('option');
         //var arrTegOptions = Document.prototype.querySelectorAll('option');
-        //var arrTegOptions = this.template.querySelectorAll('option');
+        var arrTegOptions = this.template.querySelectorAll('option');
         //var arrTegOptions = element.template.querySelector('option');
-        var arrTegOptions = this.template.querySelector('tr[data-accountid="' + this.inputId + '"] option[value="Hot"]');
-       console.log('option : ',arrTegOptions);
+        //var arrTegOptions = this.template.querySelector('tr[data-accountid="' + this.inputId + '"] option[value="Hot"]');
+       console.log('option : ',arrTegOptions[0]);
     }
 
     /*clickPickList() {
@@ -90,20 +89,20 @@ export default class CustomDataTable extends LightningElement {
       this.openClosePickList(false); 
     }*/
 
-    clickEdit(event){       
-        this.inputId = event.target.dataset.id;
-        this.inputValue = event.target.dataset.value;
-        this.inputfield = event.target.dataset.field;
+    clickEdit(event){               
+        this.inputId = event.detail.accountIdRow;
+        this.inputValue = event.detail.accountName;
+        this.inputfield = event.detail.valueField;        
         for(let Acc of this.dataTable){          
             Acc.editRow = false;           
         } 
         this.openCloseInput(true);                       
     }    
 
-    inputDisplay(event){
-        if (event.keyCode === 13) {
+    inputDisplay(event){               
+        if (event.detail.keyCodeCompanentinput === 13) {
             event.preventDefault();
-            this.inputEditValue = event.target.value;            
+            this.inputEditValue = event.detail.inputValue;            
             for(let Acc of this.dataTable){                
                 if(Acc.Id == this.inputId){
                     Acc.Name = this.inputEditValue;
@@ -114,7 +113,7 @@ export default class CustomDataTable extends LightningElement {
             this.openCloseInput(false);
             this.showButtonCancelSave = true;
             this.showEditButton = false;                               
-        } else if (event.keyCode === 27) {
+        } else if (event.detail.keyCodeCompanentinput === 27) {
             this.openCloseInput(false);
         }      
     }
@@ -170,8 +169,7 @@ export default class CustomDataTable extends LightningElement {
 
     deleteAccount(event){
         let currentRecord = [];
-        currentRecord.push(event.target.dataset.id);
-        console.log(currentRecord,'currentRecord');        
+        currentRecord.push(event.detail.accountIdRow);                
         deleteAccount({idAccountDelete: currentRecord})
             .then((respons) => { 
                 if(respons) {
