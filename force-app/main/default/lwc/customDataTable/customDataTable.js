@@ -16,13 +16,7 @@ export default class CustomDataTable extends LightningElement {
     inputEditValue;
     showButtonCancelSave = false;
     showEditButton = true;
-    /*valuesPickList =  
-        {hot : "Hot",
-        warm : "Warm",
-        cold : "Cold"};*/
-
-
-    
+    colorBackGround;    
 
     @wire(getAccountTableController) 
     contactData(result) {
@@ -37,7 +31,7 @@ export default class CustomDataTable extends LightningElement {
                     editRow : false,
                     showPickList : false    
                 };              
-                    currentData.push(rowData);                
+                currentData.push(rowData);                
             });
             this.dataTable = currentData;                                              
         } else if (error) {                       
@@ -46,55 +40,55 @@ export default class CustomDataTable extends LightningElement {
         }                        
     }    
 
-    clickEditRating(event){
-        // когда ты получаешь ивент, обработчик смотрит на то,, что в первую очередь вызвало ивент
-        // в твоем случае ивент.таргет будет ссылаться конкретно на тот обьект, который этот ивент вызвал, в товем случае - кнопка редактирования
-        // и все указанные свойства будут искаться в этой кнопке.
-
-        // если же ты хочешь найти другой обьект, который находится рядом с кнопкой, тебе нужно сделать указатель, по которому ты сможешь определить, является ли тот тег и твоя сработанная кнопка связаны чем-то
-        // например - они находятся в одном ряду.
+    clickEditRating(event){        
         this.inputId = event.detail.accountIdRow;
-        this.inputValue = event.detail.accountRating;
-        this.inputfield = event.detail.valueField;
-        // и вот тут если ты, допустим, знаешь айди и знаешь в каком ряде это айди встречается, то ты можешь составить запрос селектора для того чтобы получить конкретный тег, в твоем случае - опцию в селекте
-        // выглядит это примерно так: this.template.querySelector('tr[data-....=""] option[value=""]') - вот тут ты указываешь что ищешь тег тр в котором есть параметр дата-"твоеимятут" = твой айди, допустим и внутри этого тега ищешь тег опшн в котором значение равно тому что тебе надо.
-        // айди же в 57 строке ты получаешь правильно.        
-        
-        this.openClosePickList(true);
-        this.selectedValueStandartPickList();
+        this.inputValue = event.detail.accountRating;               
+        this.openClosePickList(true);        
     }
 
+    saveEditNewValue(event) {
+        this.inputEditValue = event.detail.accountEditRating;
+        this.inputfield = event.detail.valueField;        
+        this.showButtonCancelSave = true;
+        this.showEditButton = false;
+        this.colorBackGround = event.detail.colorBackGround;
+        this.colorBackGround.style.backgroundColor = 'yellow';
+        this.openClosePickList(false);
+        for(let Acc of this.dataTable){                
+            if(Acc.Id == this.inputId){
+                 Acc.Rating = this.inputEditValue;                
+                break;
+            }
+        }                   
+    }
+
+    closeEcsPickList(event){
+        if (event.detail.keyCodeCompanentinput === 27) { 
+            this.openClosePickList(false);            
+        }
+    }
+
+
     openClosePickList(coman){
+        for(let Acc of this.dataTable){         
+            Acc.showPickList = false;
+            Acc.editRow = false;     
+        }
         for(let Acc of this.dataTable){                
             if(Acc.Id == this.inputId){
                 Acc.showPickList = coman;                
                 break;
             }
         }
-    }
-
-    selectedValueStandartPickList(){
-        console.log('selected');
-        //var arrTegOptions = document.body.querySelectorAll('option');
-        //var arrTegOptions = Document.prototype.querySelectorAll('option');
-        var arrTegOptions = this.template.querySelectorAll('option');
-        //var arrTegOptions = element.template.querySelector('option');
-        //var arrTegOptions = this.template.querySelector('tr[data-accountid="' + this.inputId + '"] option[value="Hot"]');
-       console.log('option : ',arrTegOptions[0]);
-    }
-
-    /*clickPickList() {
-      //this.inputEditValue = event.detail;
-      //console.log(event);
-      this.openClosePickList(false); 
-    }*/
+    }   
 
     clickEdit(event){               
         this.inputId = event.detail.accountIdRow;
         this.inputValue = event.detail.accountName;
         this.inputfield = event.detail.valueField;        
         for(let Acc of this.dataTable){          
-            Acc.editRow = false;           
+            Acc.editRow = false;
+            Acc.showPickList = false;           
         } 
         this.openCloseInput(true);                       
     }    
@@ -105,11 +99,12 @@ export default class CustomDataTable extends LightningElement {
             this.inputEditValue = event.detail.inputValue;            
             for(let Acc of this.dataTable){                
                 if(Acc.Id == this.inputId){
-                    Acc.Name = this.inputEditValue;
-                    //Acc.ratingClass = 'slds-is-edited';                                    
+                    Acc.Name = this.inputEditValue;                                                       
                     break;
                 }
-            }          
+            }
+            this.colorBackGround = event.detail.colorBackGround;
+            this.colorBackGround.style.backgroundColor = 'yellow';     
             this.openCloseInput(false);
             this.showButtonCancelSave = true;
             this.showEditButton = false;                               
@@ -120,21 +115,42 @@ export default class CustomDataTable extends LightningElement {
 
     closeInput(){       
         this.showButtonCancelSave = false;
-        for(let Acc of this.dataTable){                
-            if(Acc.Id == this.inputId){
-                Acc.Name = this.inputValue;                
-                break;
+        if(this.inputfield === 'Name') {
+            for(let Acc of this.dataTable){                
+                if(Acc.Id == this.inputId){
+                    Acc.Name = this.inputValue;                
+                    break;
+                }
+            }              
+        } else if (this.inputfield === 'Rating') {
+            for(let Acc of this.dataTable){                
+                if(Acc.Id == this.inputId){
+                    Acc.Rating = this.inputValue;
+                    Acc.showPickList = false;                
+                    break;
+                }
             }
         }
-        this.showEditButton = true;
+        this.colorBackGround.style.backgroundColor = '';
+        this.showEditButton = true;        
         return refreshApex(this.refrechTable);  
     }
 
-    saveInput(){        
-        let arrayData = [{
-            Name : this.inputEditValue,
-            Id : this.inputId
-        }];       
+    saveInput(){
+        let arrayData = [];       
+        if(this.inputfield == 'Name') {        
+            let arrayDataName = {
+                Name : this.inputEditValue,
+                Id : this.inputId
+            };
+            arrayData.push(arrayDataName);
+        } else if (this.inputfield === "Rating") {
+            let arrayDataRating = {
+                Rating : this.inputEditValue,
+                Id : this.inputId
+            };            
+            arrayData.push(arrayDataRating);
+        }              
         saveDraftValues({data: arrayData})
         .then((responsSave) => { 
             if(responsSave) {
@@ -149,13 +165,12 @@ export default class CustomDataTable extends LightningElement {
                     message: 'Account update.',
                     variant: 'success'
                 }),);
-
                 return refreshApex(this.refrechTable);
             }
         })
         this.showButtonCancelSave = false;
         this.showEditButton = true;
-        
+        this.colorBackGround.style.backgroundColor = '';         
     }
 
     openCloseInput(valueEditRow){        

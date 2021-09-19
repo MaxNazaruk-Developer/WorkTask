@@ -1,8 +1,7 @@
 <template>
     <div class="slds-table_edit_container slds-is-relative">
-        <table aria-multiselectable="true" class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols" role="grid" style="width:66.75rem" aria-label="Example default inline edit table with cell focused">
-            <thead>
-              <!-- Это не пятое задание, не надо прям подробно передавать весь стиль оригинальной таблицы у SF -->
+        <table aria-multiselectable="true" class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols " role="grid" style="width:66.75rem" aria-label="Example default inline edit table with cell focused">
+            <thead>             
                 <tr class="slds-line-height_reset">
                     <th aria-label="Account Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
                         <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
@@ -57,15 +56,17 @@
                   account-id-row={Account.Id}
                   account-rating={Account.Rating}
                   account-name={Account.Name}
-                  account-edit-row={Account.editRow}
-                  accountshow-pick-list={Account.showPickList}
+                  account-edit-row={Account.editRow}                  
                   show-edit-button={showEditButton}
-                  input-value={inputValue}                  
+                  input-value={inputValue} 
+                  accountshow-pick-list={Account.showPickList}              
                   onopeninputfield={clickEdit}
                   oninputdisplay={inputDisplay}
                   ondeleteaccount={deleteAccount}
-                  onclickeditratingcompanent={clickEditRating}>
-                  </c-component-row-for-data-table>                
+                  onclickeditratingcompanent={clickEditRating}
+                  onsaveeditnewvalue={saveEditNewValue}
+                  oncloseescpicklist={closeEcsPickList}>
+                  </c-component-row-for-data-table>                                               
                 </template>
             </tbody>            
         </table>

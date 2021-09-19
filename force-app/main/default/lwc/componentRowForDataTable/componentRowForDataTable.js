@@ -5,16 +5,17 @@ export default class ComponentRowForDataTable extends LightningElement {
     @api accountIdRow;
     @api accountRating;
     @api accountEditRow;
-    @api accountshowPickList;
+    @api accountshowPickList;       
     @api showEditButton;
     @api inputValue;
     @api valueField;
     @api keyCodeCompanentinput;
-    @api optionValue = {
-        hot: "Hot",
-        warm: "Warm",
-        cold: "Cold"
-    };
+    @api colorBackGround;
+    optionValueHot = { hot: "Hot", show: false };
+    optionValueWarm = { warm: "Warm", show: false };
+    optionValueCold = { cold: "Cold", show: false };
+    optionValueNone = { none: "", show: false };
+    optionValueDir = { dir: "Dir", show: false };    
 
     clickEditNameCompanent(event) {
         this.valueField = event.target.dataset.field;
@@ -32,10 +33,12 @@ export default class ComponentRowForDataTable extends LightningElement {
     inputDisplayCompanent(event) {
         this.inputValue = event.target.value;        
         this.keyCodeCompanentinput = event.keyCode;
+        this.colorBackGround = this.template.querySelector('.onerd');        
         this.dispatchEvent(new CustomEvent("inputdisplay", {
             detail: {
                 inputValue: this.inputValue, 
-                keyCodeCompanentinput: this.keyCodeCompanentinput
+                keyCodeCompanentinput: this.keyCodeCompanentinput,
+                colorBackGround: this.colorBackGround
             }
         }));
     }
@@ -53,15 +56,58 @@ export default class ComponentRowForDataTable extends LightningElement {
         this.accountRating = event.target.dataset.value;
         this.accountIdRow = event.target.dataset.id;
         this.valueField = event.target.dataset.field;
-        //var arrTegOptions = this.template.querySelectorAll('option[value="'+ this.optionValue.hot +'"]');
-        //var arrTegOptions = element.template.querySelector('option');
-        //var arrTegOptions = this.template.querySelector('tr[data-accountid="' + this.inputId + '"] option[value="Hot"]');
-       //console.log('optionCompanent : ', arrTegOptions);
+        this.selectStandartValue(this.accountRating);        
         this.dispatchEvent(new CustomEvent("clickeditratingcompanent", {
             detail: {
                 accountRating: this.accountRating,
-                accountIdRow: this.accountIdRow,
-                valueField: this.valueField                  
+                accountIdRow: this.accountIdRow                                
+            }
+        }));
+    }
+
+    selectStandartValue(show){        
+        switch(show) {           
+            case this.optionValueHot.hot:
+                this.optionValueHot.show = true;
+                break;
+            case this.optionValueWarm.warm:
+                this.optionValueWarm.show = true;
+                break;
+            case this.optionValueCold.cold:
+                this.optionValueCold.show = true;
+                break;
+            case this.optionValueDir.dir:
+                this.optionValueDir.show = true;
+                break;
+            default:
+                this.optionValueNone.show = true;
+        }
+    }
+
+    clickOption(event) {        
+        this.accountEditRating = event.target.value;
+        this.colorBackGround = this.template.querySelector('.tword');
+        if(this.accountRating === undefined) {
+            this.accountRating = '';
+        }
+        console.log('accountRating', this.accountRating);
+        console.log('accountEditRating', this.accountEditRating);
+        if(this.accountRating !== this.accountEditRating) {            
+            this.dispatchEvent(new CustomEvent("saveeditnewvalue", {
+                detail: {
+                    accountEditRating: this.accountEditRating,               
+                    valueField: this.valueField,
+                    colorBackGround: this.colorBackGround                  
+                }
+            }));
+        }        
+    }
+    keyUpPickList(event) {         
+        this.keyCodeCompanentinput = event.keyCode;        
+        this.dispatchEvent(new CustomEvent("closeescpicklist", {
+            detail: {
+                keyCodeCompanentinput: this.keyCodeCompanentinput,
+                                             
             }
         }));
     }
