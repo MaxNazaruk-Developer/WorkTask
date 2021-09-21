@@ -1,8 +1,10 @@
 import { LightningElement,wire, api, track } from 'lwc';
-import getAccountTableController from '@salesforce/apex/inlineEditTableController.getAccountTableController'
-import deleteAccount from '@salesforce/apex/inlineEditTableController.deleteAccount'
-import {refreshApex} from '@salesforce/apex';
+
+import getAccountTableController from '@salesforce/apex/inlineEditTableController.getAccountTableController';
+import deleteAccount from '@salesforce/apex/inlineEditTableController.deleteAccount';
 import saveDraftValues from '@salesforce/apex/inlineEditTableController.saveDraftValues';
+
+import {refreshApex} from '@salesforce/apex';
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
 
 const COLUMNS = [
@@ -52,41 +54,12 @@ export default class InlineEditTable extends LightningElement {
     @track columns = COLUMNS;
     @track columnsNon = COLUMNS_NON;
     @track data;
-    @api recordId;      
-    @track originalMessage;    
-    selectedRow;
+    showHidePencil = true;
+    privateChildren = {};   
+
     draftValues = [];
-    refrechTable;
-    showHidePencil = true;    
-    privateChildren = {};
     lastSavedData;
-
-    renderedCallback() {
-        if (!this.isComponentLoaded) {
-            window.addEventListener('click', (evt) => {
-                this.handleWindowOnclick(evt);
-            });
-            this.isComponentLoaded = true;
-        }
-    }
-
-    disconnectedCallback() {
-        window.removeEventListener('click', () => {
-        });
-    }
-
-    handleWindowOnclick(context) {
-        this.resetPopups('c-custom-type-pick-list', context);
-    }
-
-    resetPopups(markup, context) {
-        let elementMarkup = this.privateChildren[markup];
-        if (elementMarkup) {
-            Object.values(elementMarkup).forEach((element) => {
-                element.callbacks.reset(context);
-            });
-        }
-    }
+    refrechTable;
 
     @wire(getAccountTableController) 
     contactData(result) {
@@ -102,7 +75,7 @@ export default class InlineEditTable extends LightningElement {
             this.data = undefined;
         }
         this.lastSavedData = this.data;                
-    }
+    } 
 
     handleItemRegister(event) {
         event.stopPropagation();
@@ -116,19 +89,19 @@ export default class InlineEditTable extends LightningElement {
         const row = event.detail.row;        
         if (event.detail.action.name === 'delete_account') {
             this.selectedRow = event.detail.row;
-            this.deleteCurrAccounts(row);
+            this.deleteCurrentAccounts(row);
         }
     }
 
-    deleteCurrAccounts(currentRow) {
+    deleteCurrentAccounts(currentRow) {
         let currentRecord = [];
         currentRecord.push(currentRow.Id);        
         deleteAccount({idAccountDelete: currentRecord})
-            .then((respons) => { 
-                if(respons) {
+            .then((response) => { 
+                if(response) {
                     this.dispatchEvent(new ShowToastEvent({
                         title: 'Error delete',
-                        message: respons,
+                        message: response,
                         variant: 'error'
                     }),);
                 } else {
@@ -143,34 +116,22 @@ export default class InlineEditTable extends LightningElement {
             })           
     }
     
-    handleSave(event) {
-        event.preventDefault();        
-        saveDraftValues({data: this.draftValues})
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Success',
-                        message: 'Account updated successfully',
-                        variant: 'success'
-                    })
+    picklistEdit(event) {
+        event.preventDefault();
+        let dataReceived = event.detail.data;
+        this.handleWindowOnclick(dataReceived.context);
+        switch (dataReceived.label) {
+            case 'Rating':
+                this.setClassesOnData(
+                    dataReceived.context,
+                    'ratingClass',
+                    'slds-cell-edit'
                 );
-                refreshApex(this.refrechTable).then(() => {
-                    this.data.forEach(record => {
-                        record.ratingClass = 'slds-cell-edit';
-                    });
-                    this.draftValues = [];
-                });
-            })
-            .catch(error => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error updating or reloading record',
-                        message: error.body.message,
-                        variant: 'error'
-                    })
-                );                
-            });
-        this.showHidePencil = true;
+                break;
+            default:
+                this.setClassesOnData(dataReceived.context, '', '');
+                break;
+        }
     }
 
     handleCellChange(event) {
@@ -201,6 +162,7 @@ export default class InlineEditTable extends LightningElement {
         this.updateDataValues(updatedItem);
         this.updateDraftValues(updatedItem);
     }
+    
     updateDataValues(updateItem) {
         let copyData = JSON.parse(JSON.stringify(this.data));
         copyData.forEach((item) => {
@@ -230,25 +192,7 @@ export default class InlineEditTable extends LightningElement {
             this.draftValues = [...copyDraftValues, updateItem];
         }
         this.showHidePencil = false;
-    }
-
-    picklistEdit(event) {
-        event.preventDefault();
-        let dataReceived = event.detail.data;
-        this.handleWindowOnclick(dataReceived.context);
-        switch (dataReceived.label) {
-            case 'Rating':
-                this.setClassesOnData(
-                    dataReceived.context,
-                    'ratingClass',
-                    'slds-cell-edit'
-                );
-                break;
-            default:
-                this.setClassesOnData(dataReceived.context, '', '');
-                break;
-        }
-    }
+    }    
 
     setClassesOnData(id, fieldName, fieldValue) {
         this.data = JSON.parse(JSON.stringify(this.data));
@@ -259,11 +203,68 @@ export default class InlineEditTable extends LightningElement {
         });
     }
 
+    handleSave(event) {
+        event.preventDefault();        
+        saveDraftValues({data: this.draftValues})
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Account updated successfully',
+                        variant: 'success'
+                    })
+                );
+                refreshApex(this.refrechTable).then(() => {
+                    this.data.forEach(record => {
+                        record.ratingClass = 'slds-cell-edit';
+                    });
+                    this.draftValues = [];
+                });
+            })
+            .catch(error => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error updating or reloading record',
+                        message: error.body.message,
+                        variant: 'error'
+                    })
+                );                
+            });
+        this.showHidePencil = true;
+    }    
+
     cancelInlineEdit(event) {
         event.preventDefault();
         this.data = JSON.parse(JSON.stringify(this.lastSavedData));
         this.handleWindowOnclick('reset');
         this.draftValues = [];
         this.showHidePencil = true;
+    }
+
+    renderedCallback() {
+        if (!this.isComponentLoaded) {
+            window.addEventListener('click', (evt) => {
+                this.handleWindowOnclick(evt);
+            });
+            this.isComponentLoaded = true;
+        }
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener('click', () => {
+        });
+    }
+
+    handleWindowOnclick(context) {
+        this.resetPopups('c-custom-type-pick-list', context);
+    }
+
+    resetPopups(markup, context) {
+        let elementMarkup = this.privateChildren[markup];
+        if (elementMarkup) {
+            Object.values(elementMarkup).forEach((element) => {
+                element.callbacks.reset(context);
+            });
+        }
     }
 }

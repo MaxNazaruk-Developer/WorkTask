@@ -1,15 +1,18 @@
 import {LightningElement, api} from 'lwc';
+
 import {loadStyle} from 'lightning/platformResourceLoader';
 import CustomResource from '@salesforce/resourceUrl/CustomDataTable';
 
 export default class CustomTypePickList extends LightningElement {
-    @api label;
+    @api variant;
     @api placeholder;
     @api options;
+
+    @api label;    
     @api value;
     @api context;
-    @api variant;
     @api name;
+    
     showPicklist = false;
     picklistValueChanged = false;
 
@@ -75,5 +78,4 @@ export default class CustomTypePickList extends LightningElement {
             }
         }));
     }
-
 }

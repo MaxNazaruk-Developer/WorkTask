@@ -1,5 +1,6 @@
 import LightningDatatable from 'lightning/datatable';
-import DatatablePicklistTemplate from './picklistTemplete.html';
+
+import DatatablePicklistTemplate from './picklistTemplate.html';
 
 export default class CustomDataTable extends LightningDatatable {
 
@@ -10,5 +11,4 @@ export default class CustomDataTable extends LightningDatatable {
             typeAttributes: ['label', 'placeholder', 'options', 'value', 'context', 'variant', 'name']
         }
     };
-
 }

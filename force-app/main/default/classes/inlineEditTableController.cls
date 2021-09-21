@@ -3,7 +3,8 @@ public with sharing class inlineEditTableController {
     public static List<Account> getAccountTableController() {            
         return [
             SELECT Name, Rating, Id
-            FROM Account                 
+            FROM Account
+            LIMIT 50                 
         ];             
     }
 
@@ -28,20 +29,17 @@ public with sharing class inlineEditTableController {
     }
     
     @AuraEnabled
-    public static String saveDraftValues(Object data) {
-        System.debug(data);
+    public static String saveDraftValues(Object data) {        
         List<Account> listOfAccounts = (List<Account>) JSON.deserialize(
                 JSON.serialize(data),
                 List<Account>.class
         );
-        String responsSave = '';
-        System.debug(listofAccounts); 
+        String responsSave = '';         
         try {
             update listOfAccounts;        
         } catch (Exception ex) {            
             responsSave = ex.getMessage();                             
         }
-        return responsSave; 
-        
+        return responsSave;         
     }  
 }

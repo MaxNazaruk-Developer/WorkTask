@@ -26,7 +26,35 @@ public with sharing class inlineEditTableControllerTest {
         inlineEditTableController.deleteAccount(listTest);       
         Test.stopTest();
 
-        System.assertEquals(1, [SELECT Id FROM Account].size());
+        System.assertEquals(1, [SELECT Id FROM Account LIMIT 50].size());
+    }
+
+    @isTest
+    public static void deleteAccountNigativTest() {
+        List<Id> listTest = new List<Id>();        
+        Account deleteAccount = [
+                SELECT Id
+                FROM Account
+                LIMIT 1
+        ];
+        listTest.add(deleteAccount.Id);
+
+        Case caseTest = new Case(
+            Status = 'Working',
+            Origin = 'Web',
+            AccountId = deleteAccount.Id
+        );
+        insert caseTest;
+
+        Test.startTest();        
+        try {
+            inlineEditTableController.deleteAccount(listTest); 
+        } catch (Exception ex) {
+
+        }      
+        Test.stopTest();
+
+        System.assertEquals(2, [SELECT Id FROM Account].size());
     }
 
     @isTest
@@ -34,6 +62,7 @@ public with sharing class inlineEditTableControllerTest {
         List<Account> expectedListAcc = [
             SELECT Name,Id 
             FROM Account
+            LIMIT 50
         ];
 
         Test.startTest();
@@ -49,7 +78,8 @@ public with sharing class inlineEditTableControllerTest {
     static void saveDraftValuesTest() {
         Account[] acct = [
             SELECT Name,Id, Rating 
-            FROM Account           
+            FROM Account
+            LIMIT 50          
         ];
         acct[0].Rating = 'TestRating';
 
@@ -63,5 +93,34 @@ public with sharing class inlineEditTableControllerTest {
             WHERE Rating = 'TestRating'
         ];
         System.assertEquals('TestRating', equalsAcc.Rating);        
+    }
+
+    @IsTest
+    static void saveDraftValuesNigativTest() {
+        Account[] acct = [
+            SELECT Name,Id, Rating 
+            FROM Account
+            LIMIT 50         
+        ];
+        acct[0].Rating = 'TestRating';
+        acct[0].Id = null;
+
+        Test.startTest();
+        try {
+        inlineEditTableController.saveDraftValues(acct);
+        } catch (Exception ex) {
+
+        }
+        Test.stopTest();
+        
+        List <Account> equalsAcc = [
+            SELECT Name, Id, Rating  
+            FROM Account
+            LIMIT 50         
+        ];
+
+        for (Account oneAccount : equalsAcc) {
+            System.assertNotEquals('TestRating', oneAccount.Rating); 
+        }               
     }
 }
