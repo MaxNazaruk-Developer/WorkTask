@@ -89,9 +89,7 @@ export default class ComponentRowForDataTable extends LightningElement {
         this.colorBackGround = this.template.querySelector('.tword');
         if(this.accountRating === undefined) {
             this.accountRating = '';
-        }
-        console.log('accountRating', this.accountRating);
-        console.log('accountEditRating', this.accountEditRating);
+        }       
         if(this.accountRating !== this.accountEditRating) {            
             this.dispatchEvent(new CustomEvent("saveeditnewvalue", {
                 detail: {

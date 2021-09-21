@@ -1,21 +1,26 @@
-import { LightningElement,wire, api, track } from 'lwc';
-import getAccountTableController from '@salesforce/apex/inlineEditTableController.getAccountTableController'
-import deleteAccount from '@salesforce/apex/inlineEditTableController.deleteAccount'
-import {refreshApex} from '@salesforce/apex';
+import { LightningElement, wire, track } from 'lwc';
+
+import getAccountTableController from '@salesforce/apex/inlineEditTableController.getAccountTableController';
+import deleteAccount from '@salesforce/apex/inlineEditTableController.deleteAccount';
 import saveDraftValues from '@salesforce/apex/inlineEditTableController.saveDraftValues';
+
+import {refreshApex} from '@salesforce/apex';
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
 
 
 
 export default class CustomDataTable extends LightningElement {
-    refrechTable;
+    
     @track dataTable = [];
+
     inputValue;
     inputId;
     inputfield;
     inputEditValue;
+
     showButtonCancelSave = false;
     showEditButton = true;
+    refrechTable;
     colorBackGround;    
 
     @wire(getAccountTableController) 
@@ -54,12 +59,8 @@ export default class CustomDataTable extends LightningElement {
         this.colorBackGround = event.detail.colorBackGround;
         this.colorBackGround.style.backgroundColor = 'yellow';
         this.openClosePickList(false);
-        for(let Acc of this.dataTable){                
-            if(Acc.Id == this.inputId){
-                 Acc.Rating = this.inputEditValue;                
-                break;
-            }
-        }                   
+        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+        editAccountFiald.Rating = this.inputEditValue;                           
     }
 
     closeEcsPickList(event){
@@ -68,18 +69,13 @@ export default class CustomDataTable extends LightningElement {
         }
     }
 
-
     openClosePickList(coman){
         for(let Acc of this.dataTable){         
             Acc.showPickList = false;
             Acc.editRow = false;     
         }
-        for(let Acc of this.dataTable){                
-            if(Acc.Id == this.inputId){
-                Acc.showPickList = coman;                
-                break;
-            }
-        }
+        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+        editAccountFiald.showPickList = coman;        
     }   
 
     clickEdit(event){               
@@ -96,13 +92,9 @@ export default class CustomDataTable extends LightningElement {
     inputDisplay(event){               
         if (event.detail.keyCodeCompanentinput === 13) {
             event.preventDefault();
-            this.inputEditValue = event.detail.inputValue;            
-            for(let Acc of this.dataTable){                
-                if(Acc.Id == this.inputId){
-                    Acc.Name = this.inputEditValue;                                                       
-                    break;
-                }
-            }
+            this.inputEditValue = event.detail.inputValue;
+            let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+            editAccountFiald.Name = this.inputEditValue;           
             this.colorBackGround = event.detail.colorBackGround;
             this.colorBackGround.style.backgroundColor = 'yellow';     
             this.openCloseInput(false);
@@ -115,24 +107,15 @@ export default class CustomDataTable extends LightningElement {
 
     closeInput(){       
         this.showButtonCancelSave = false;
+        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);
         if(this.inputfield === 'Name') {
-            for(let Acc of this.dataTable){                
-                if(Acc.Id == this.inputId){
-                    Acc.Name = this.inputValue;                
-                    break;
-                }
-            }              
+            editAccountFiald.Name = this.inputValue;
         } else if (this.inputfield === 'Rating') {
-            for(let Acc of this.dataTable){                
-                if(Acc.Id == this.inputId){
-                    Acc.Rating = this.inputValue;
-                    Acc.showPickList = false;                
-                    break;
-                }
-            }
+            editAccountFiald.Rating = this.inputValue;
+            editAccountFiald.showPickList = false;
         }
         this.colorBackGround.style.backgroundColor = '';
-        this.showEditButton = true;        
+        this.showEditButton = true;               
         return refreshApex(this.refrechTable);  
     }
 
@@ -164,22 +147,18 @@ export default class CustomDataTable extends LightningElement {
                     title: 'Success update',
                     message: 'Account update.',
                     variant: 'success'
-                }),);
+                }),);                               
                 return refreshApex(this.refrechTable);
             }
         })
         this.showButtonCancelSave = false;
         this.showEditButton = true;
         this.colorBackGround.style.backgroundColor = '';         
-    }
+    }   
 
-    openCloseInput(valueEditRow){        
-        for(let Acc of this.dataTable){                
-            if(Acc.Id == this.inputId){
-                Acc.editRow = valueEditRow;                
-                break;
-            }
-        } 
+    openCloseInput(valueEditRow){
+        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+        editAccountFiald.editRow = valueEditRow;       
     }
 
     deleteAccount(event){
@@ -198,10 +177,9 @@ export default class CustomDataTable extends LightningElement {
                         title: 'Success delete',
                         message: 'Account deleted.',
                         variant: 'success'
-                    }),);
-    
+                    }),);                    
                     return refreshApex(this.refrechTable);
                 }
-            })     
-    }
+        })     
+    }   
 }

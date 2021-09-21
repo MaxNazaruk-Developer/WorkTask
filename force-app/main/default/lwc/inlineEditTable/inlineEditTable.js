@@ -65,7 +65,7 @@ export default class InlineEditTable extends LightningElement {
     contactData(result) {
         this.refrechTable = result;
         const {data,error} = result;
-        if (data) {
+        if (data) {            
             this.data = JSON.parse(JSON.stringify(data));
             this.data.forEach(row => {
                 row.ratingClass = 'slds-cell-edit';
@@ -163,7 +163,7 @@ export default class InlineEditTable extends LightningElement {
         this.updateDraftValues(updatedItem);
     }
     
-    updateDataValues(updateItem) {
+    updateDataValues(updateItem) {       
         let copyData = JSON.parse(JSON.stringify(this.data));
         copyData.forEach((item) => {
             if (item.Id === updateItem.Id) {
@@ -177,7 +177,7 @@ export default class InlineEditTable extends LightningElement {
 
     updateDraftValues(updateItem) {
         let draftValueChanged = false;
-        let copyDraftValues = JSON.parse(JSON.stringify(this.draftValues));
+        let copyDraftValues = JSON.parse(JSON.stringify(this.draftValues));        
         copyDraftValues.forEach((item) => {
             if (item.Id === updateItem.Id) {
                 for (let field in updateItem) {
@@ -194,7 +194,7 @@ export default class InlineEditTable extends LightningElement {
         this.showHidePencil = false;
     }    
 
-    setClassesOnData(id, fieldName, fieldValue) {
+    setClassesOnData(id, fieldName, fieldValue) {        
         this.data = JSON.parse(JSON.stringify(this.data));
         this.data.forEach((detail) => {
             if (detail.Id === id) {
@@ -235,7 +235,7 @@ export default class InlineEditTable extends LightningElement {
 
     cancelInlineEdit(event) {
         event.preventDefault();
-        this.data = JSON.parse(JSON.stringify(this.lastSavedData));
+        this.data = JSON.parse(JSON.stringify(this.lastSavedData));        
         this.handleWindowOnclick('reset');
         this.draftValues = [];
         this.showHidePencil = true;
