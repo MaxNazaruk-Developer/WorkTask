@@ -4,13 +4,16 @@ export default class ComponentRowForDataTable extends LightningElement {
     @api accountName;
     @api accountIdRow;
     @api accountRating;
+
     @api accountEditRow;
     @api accountshowPickList;       
     @api showEditButton;
-    @api inputValue;
-    @api valueField;
-    @api keyCodeCompanentinput;
-    @api colorBackGround;
+
+    inputValue;
+    valueField;
+    keyCodeCompanentinput;
+    colorBackground;        
+   
     optionValueHot = { hot: "Hot", show: false };
     optionValueWarm = { warm: "Warm", show: false };
     optionValueCold = { cold: "Cold", show: false };
@@ -33,12 +36,12 @@ export default class ComponentRowForDataTable extends LightningElement {
     inputDisplayCompanent(event) {
         this.inputValue = event.target.value;        
         this.keyCodeCompanentinput = event.keyCode;
-        this.colorBackGround = this.template.querySelector('.onerd');        
+        this.colorBackground = this.template.querySelector('.onerd');        
         this.dispatchEvent(new CustomEvent("inputdisplay", {
             detail: {
                 inputValue: this.inputValue, 
                 keyCodeCompanentinput: this.keyCodeCompanentinput,
-                colorBackGround: this.colorBackGround
+                colorBackground: this.colorBackground
             }
         }));
     }
@@ -86,7 +89,7 @@ export default class ComponentRowForDataTable extends LightningElement {
 
     clickOption(event) {        
         this.accountEditRating = event.target.value;
-        this.colorBackGround = this.template.querySelector('.tword');
+        this.colorBackground = this.template.querySelector('.tword');
         if(this.accountRating === undefined) {
             this.accountRating = '';
         }       
@@ -95,7 +98,7 @@ export default class ComponentRowForDataTable extends LightningElement {
                 detail: {
                     accountEditRating: this.accountEditRating,               
                     valueField: this.valueField,
-                    colorBackGround: this.colorBackGround                  
+                    colorBackground: this.colorBackground                  
                 }
             }));
         }        

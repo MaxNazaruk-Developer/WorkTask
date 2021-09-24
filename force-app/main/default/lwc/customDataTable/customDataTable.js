@@ -11,7 +11,7 @@ import {ShowToastEvent} from "lightning/platformShowToastEvent";
 
 export default class CustomDataTable extends LightningElement {
     
-    @track dataTable = [];
+    @track datatable = [];
 
     inputValue;
     inputId;
@@ -20,12 +20,12 @@ export default class CustomDataTable extends LightningElement {
 
     showButtonCancelSave = false;
     showEditButton = true;
-    refrechTable;
-    colorBackGround;    
+    refreshTable;
+    colorBackground;    
 
     @wire(getAccountTableController) 
     contactData(result) {
-        this.refrechTable = result;
+        this.refreshTable = result;
         const {data,error} = result;
         if (data) {            
             let currentData = [];            
@@ -38,10 +38,10 @@ export default class CustomDataTable extends LightningElement {
                 };              
                 currentData.push(rowData);                
             });
-            this.dataTable = currentData;                                              
+            this.datatable = currentData;                                              
         } else if (error) {                       
             this.error = error;
-            this.dataTable = undefined;
+            this.datatable = undefined;
         }                        
     }    
 
@@ -56,10 +56,10 @@ export default class CustomDataTable extends LightningElement {
         this.inputfield = event.detail.valueField;        
         this.showButtonCancelSave = true;
         this.showEditButton = false;
-        this.colorBackGround = event.detail.colorBackGround;
-        this.colorBackGround.style.backgroundColor = 'yellow';
+        this.colorBackground = event.detail.colorBackground;
+        this.colorBackground.classList.toggle('colorcelledit');        
         this.openClosePickList(false);
-        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+        let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);        
         editAccountFiald.Rating = this.inputEditValue;                           
     }
 
@@ -69,23 +69,23 @@ export default class CustomDataTable extends LightningElement {
         }
     }
 
-    openClosePickList(coman){
-        for(let Acc of this.dataTable){         
-            Acc.showPickList = false;
-            Acc.editRow = false;     
-        }
-        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
-        editAccountFiald.showPickList = coman;        
+    openClosePickList(command){
+        this.datatable.map((Account) => {
+            Account.showPickList = false;
+            Account.editRow = false;
+        } );       
+        let editAccountField = this.datatable.find(item => item.Id == this.inputId);        
+        editAccountField.showPickList = command;        
     }   
 
-    clickEdit(event){               
+    clickEdit(event){        
         this.inputId = event.detail.accountIdRow;
         this.inputValue = event.detail.accountName;
-        this.inputfield = event.detail.valueField;        
-        for(let Acc of this.dataTable){          
-            Acc.editRow = false;
-            Acc.showPickList = false;           
-        } 
+        this.inputfield = event.detail.valueField;
+        this.datatable.map((Account) => {
+            Account.showPickList = false;
+            Account.editRow = false;
+        } );       
         this.openCloseInput(true);                       
     }    
 
@@ -93,71 +93,88 @@ export default class CustomDataTable extends LightningElement {
         if (event.detail.keyCodeCompanentinput === 13) {
             event.preventDefault();
             this.inputEditValue = event.detail.inputValue;
-            let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+            let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);        
             editAccountFiald.Name = this.inputEditValue;           
-            this.colorBackGround = event.detail.colorBackGround;
-            this.colorBackGround.style.backgroundColor = 'yellow';     
+            this.colorBackground = event.detail.colorBackground;
+            this.colorBackground.classList.toggle('colorcelledit');                
             this.openCloseInput(false);
             this.showButtonCancelSave = true;
             this.showEditButton = false;                               
         } else if (event.detail.keyCodeCompanentinput === 27) {
             this.openCloseInput(false);
         }      
-    }
+    }  
 
+    saveInput(){
+        let arrayData = [];
+        switch (this.inputfield) {
+            case 'Name':
+                let arrayDataName = {
+                    Name : this.inputEditValue,
+                    Id : this.inputId
+                };
+                arrayData.push(arrayDataName);
+                break;
+            case 'Rating':
+                let arrayDataRating = {
+                    Rating : this.inputEditValue,
+                    Id : this.inputId
+                };            
+                arrayData.push(arrayDataRating);
+                break;           
+        };        
+        /*if(this.inputfield == 'Name') {        
+            let arrayDataName = {
+                Name : this.inputEditValue,
+                Id : this.inputId
+            };
+            arrayData.push(arrayDataName);
+        } else if (this.inputfield == 'Rating') {
+            let arrayDataRating = {
+                Rating : this.inputEditValue,
+                Id : this.inputId
+            };            
+            arrayData.push(arrayDataRating);
+        }*/              
+        saveDraftValues({data: arrayData})
+        .then((responseSave) => { 
+            if(responseSave) {
+                this.dispatchEvent(new ShowToastEvent({
+                    title: 'Error save',
+                    message: responseSave,
+                    variant: 'error'
+                }))
+                this.closeInput();
+            } else {
+                this.dispatchEvent(new ShowToastEvent({
+                    title: 'Success update',
+                    message: 'Account update.',
+                    variant: 'success'
+                }))
+                this.showButtonCancelSave = false;
+                this.showEditButton = true;
+                this.colorBackground.classList.toggle('colorcelledit');                              
+                return refreshApex(this.refreshTable);
+            }
+        })                        
+    }  
+    
     closeInput(){       
         this.showButtonCancelSave = false;
-        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);
+        let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);
         if(this.inputfield === 'Name') {
             editAccountFiald.Name = this.inputValue;
         } else if (this.inputfield === 'Rating') {
             editAccountFiald.Rating = this.inputValue;
             editAccountFiald.showPickList = false;
         }
-        this.colorBackGround.style.backgroundColor = '';
+        this.colorBackground.classList.toggle('colorcelledit');        
         this.showEditButton = true;               
-        return refreshApex(this.refrechTable);  
+        return refreshApex(this.refreshTable);  
     }
 
-    saveInput(){
-        let arrayData = [];       
-        if(this.inputfield == 'Name') {        
-            let arrayDataName = {
-                Name : this.inputEditValue,
-                Id : this.inputId
-            };
-            arrayData.push(arrayDataName);
-        } else if (this.inputfield === "Rating") {
-            let arrayDataRating = {
-                Rating : this.inputEditValue,
-                Id : this.inputId
-            };            
-            arrayData.push(arrayDataRating);
-        }              
-        saveDraftValues({data: arrayData})
-        .then((responsSave) => { 
-            if(responsSave) {
-                this.dispatchEvent(new ShowToastEvent({
-                    title: 'Error save',
-                    message: responsSave,
-                    variant: 'error'
-                }),);
-            } else {
-                this.dispatchEvent(new ShowToastEvent({
-                    title: 'Success update',
-                    message: 'Account update.',
-                    variant: 'success'
-                }),);                               
-                return refreshApex(this.refrechTable);
-            }
-        })
-        this.showButtonCancelSave = false;
-        this.showEditButton = true;
-        this.colorBackGround.style.backgroundColor = '';         
-    }   
-
     openCloseInput(valueEditRow){
-        let editAccountFiald = this.dataTable.find(item => item.Id == this.inputId);        
+        let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);        
         editAccountFiald.editRow = valueEditRow;       
     }
 
@@ -171,14 +188,14 @@ export default class CustomDataTable extends LightningElement {
                         title: 'Error delete',
                         message: respons,
                         variant: 'error'
-                    }),);
+                    }))
                 } else {
                     this.dispatchEvent(new ShowToastEvent({
                         title: 'Success delete',
                         message: 'Account deleted.',
                         variant: 'success'
-                    }),);                    
-                    return refreshApex(this.refrechTable);
+                    }))                    
+                    return refreshApex(this.refreshTable);
                 }
         })     
     }   
