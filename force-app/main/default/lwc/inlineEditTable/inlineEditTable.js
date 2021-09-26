@@ -17,8 +17,10 @@ const COLUMNS = [
         typeAttributes: {
             placeholder: 'Choose Rating',
             options: [
+                {label: '--None--', value: ''},
                 {label: 'Hot', value: 'Hot'},
                 {label: 'Warm', value: 'Warm'},
+                {label: 'Dir', value: 'Dir'},
                 {label: 'Cold', value: 'Cold'}
             ],
             value: {fieldName: 'Rating'},
