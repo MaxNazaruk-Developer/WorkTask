@@ -1,0 +1,78 @@
+<template>
+    <div class="slds-table_edit_container slds-is-relative">
+        <table aria-multiselectable="true" class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols " role="grid" style="width:66.75rem" aria-label="Example default inline edit table with cell focused">
+            <thead>             
+                <tr class="slds-line-height_reset">
+                    <th aria-label="Account Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Account Name">Account Name</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                                            
+                        <div class="slds-resizable">
+                            <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-3788" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                        </div>                      
+                    </th>
+                    <th aria-label="Stage" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Stage">Rating</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                        
+                    </th>
+                    <th aria-label="Stage" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:8.75rem">
+                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="-1">
+                        <span class="slds-assistive-text">Sort by: </span>
+                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <span class="slds-truncate" title="Stage">Delete</span>
+                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                            </svg>
+                            </span>
+                        </div>
+                        </a>                        
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={datatable} for:item="Account">                 
+                    <c-component-row-for-data-table 
+                        key={Account.Id}                 
+                        account-id-row={Account.Id}
+                        account-rating={Account.Rating}
+                        account-name={Account.Name}
+                        account-edit-row={Account.editRow}                  
+                        show-edit-button={showEditButton}
+                        input-value={inputValue} 
+                        accountshow-pick-list={Account.showPickList}                 
+                        oninputdisplay={inputDisplay}
+                        ondeleteaccount={deleteAccount}                
+                        onsaveeditnewvalue={saveEditNewValue}
+                        oncloseescpicklist={closeEcsPickList}
+                        onopeneditfield={clickEdit}>
+                    </c-component-row-for-data-table>                                                                
+                </template>
+            </tbody>            
+        </table>
+        <div if:true={showButtonCancelSave} class="buttonfield">
+            <button class="slds-button slds-button_outline-brand" onclick={closeInput}>Cansel</button>
+            <button class="slds-button slds-button_success" onclick={saveInput}>Save</button>
+        </div>
+    </div>
+</template>
