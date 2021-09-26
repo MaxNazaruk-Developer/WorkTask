@@ -9,8 +9,7 @@ import {ShowToastEvent} from "lightning/platformShowToastEvent";
 
 
 
-export default class CustomDataTable extends LightningElement {
-    
+export default class CustomDataTable extends LightningElement {    
     @track datatable = [];
 
     inputValue;
@@ -45,11 +44,20 @@ export default class CustomDataTable extends LightningElement {
         }                        
     }    
 
-    clickEditRating(event){        
+    clickEdit(event) {        
         this.inputId = event.detail.accountIdRow;
-        this.inputValue = event.detail.accountRating;               
-        this.openClosePickList(true);        
-    }
+        this.inputValue = event.detail.defaultFieldValue;
+        this.inputfield = event.detail.valueField;
+        if (this.inputfield == 'Name') {
+            this.datatable.map((Account) => {
+                Account.showPickList = false;
+                Account.editRow = false;
+            });       
+            this.openCloseInput(true);
+        } else {
+            this.openClosePickList(true);
+        }
+    }    
 
     saveEditNewValue(event) {
         this.inputEditValue = event.detail.accountEditRating;
@@ -69,27 +77,16 @@ export default class CustomDataTable extends LightningElement {
         }
     }
 
-    openClosePickList(command){
+    openClosePickList(command) {
         this.datatable.map((Account) => {
             Account.showPickList = false;
             Account.editRow = false;
         } );       
         let editAccountField = this.datatable.find(item => item.Id == this.inputId);        
         editAccountField.showPickList = command;        
-    }   
+    }      
 
-    clickEdit(event){        
-        this.inputId = event.detail.accountIdRow;
-        this.inputValue = event.detail.accountName;
-        this.inputfield = event.detail.valueField;
-        this.datatable.map((Account) => {
-            Account.showPickList = false;
-            Account.editRow = false;
-        } );       
-        this.openCloseInput(true);                       
-    }    
-
-    inputDisplay(event){               
+    inputDisplay(event) {               
         if (event.detail.keyCodeCompanentinput === 13) {
             event.preventDefault();
             this.inputEditValue = event.detail.inputValue;
@@ -105,7 +102,7 @@ export default class CustomDataTable extends LightningElement {
         }      
     }  
 
-    saveInput(){
+    saveInput() {
         let arrayData = [];
         switch (this.inputfield) {
             case 'Name':
@@ -122,21 +119,8 @@ export default class CustomDataTable extends LightningElement {
                 };            
                 arrayData.push(arrayDataRating);
                 break;           
-        };        
-        /*if(this.inputfield == 'Name') {        
-            let arrayDataName = {
-                Name : this.inputEditValue,
-                Id : this.inputId
-            };
-            arrayData.push(arrayDataName);
-        } else if (this.inputfield == 'Rating') {
-            let arrayDataRating = {
-                Rating : this.inputEditValue,
-                Id : this.inputId
-            };            
-            arrayData.push(arrayDataRating);
-        }*/              
-        saveDraftValues({data: arrayData})
+        };                  
+        saveDraftValues({ data: arrayData })
         .then((responseSave) => { 
             if(responseSave) {
                 this.dispatchEvent(new ShowToastEvent({
@@ -150,16 +134,16 @@ export default class CustomDataTable extends LightningElement {
                     title: 'Success update',
                     message: 'Account update.',
                     variant: 'success'
-                }))
+                }))              
                 this.showButtonCancelSave = false;
                 this.showEditButton = true;
-                this.colorBackground.classList.toggle('colorcelledit');                              
+                this.colorBackground.classList.toggle('colorcelledit');                                            
                 return refreshApex(this.refreshTable);
             }
         })                        
     }  
     
-    closeInput(){       
+    closeInput() {       
         this.showButtonCancelSave = false;
         let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);
         if(this.inputfield === 'Name') {
@@ -173,12 +157,12 @@ export default class CustomDataTable extends LightningElement {
         return refreshApex(this.refreshTable);  
     }
 
-    openCloseInput(valueEditRow){
+    openCloseInput(valueEditRow) {
         let editAccountFiald = this.datatable.find(item => item.Id == this.inputId);        
         editAccountFiald.editRow = valueEditRow;       
     }
 
-    deleteAccount(event){
+    deleteAccount(event) {
         let currentRecord = [];
         currentRecord.push(event.detail.accountIdRow);                
         deleteAccount({idAccountDelete: currentRecord})

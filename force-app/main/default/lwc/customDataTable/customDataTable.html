@@ -52,21 +52,21 @@
             </thead>
             <tbody>
                 <template for:each={datatable} for:item="Account">                 
-                  <c-component-row-for-data-table key={Account.Id}                 
-                  account-id-row={Account.Id}
-                  account-rating={Account.Rating}
-                  account-name={Account.Name}
-                  account-edit-row={Account.editRow}                  
-                  show-edit-button={showEditButton}
-                  input-value={inputValue} 
-                  accountshow-pick-list={Account.showPickList}              
-                  onopeninputfield={clickEdit}
-                  oninputdisplay={inputDisplay}
-                  ondeleteaccount={deleteAccount}
-                  onclickeditratingcompanent={clickEditRating}
-                  onsaveeditnewvalue={saveEditNewValue}
-                  oncloseescpicklist={closeEcsPickList}>
-                  </c-component-row-for-data-table>                                               
+                    <c-component-row-for-data-table 
+                        key={Account.Id}                 
+                        account-id-row={Account.Id}
+                        account-rating={Account.Rating}
+                        account-name={Account.Name}
+                        account-edit-row={Account.editRow}                  
+                        show-edit-button={showEditButton}
+                        input-value={inputValue} 
+                        accountshow-pick-list={Account.showPickList}                 
+                        oninputdisplay={inputDisplay}
+                        ondeleteaccount={deleteAccount}                
+                        onsaveeditnewvalue={saveEditNewValue}
+                        oncloseescpicklist={closeEcsPickList}
+                        onopeneditfield={clickEdit}>
+                    </c-component-row-for-data-table>                                                                
                 </template>
             </tbody>            
         </table>

@@ -12,27 +12,33 @@ export default class ComponentRowForDataTable extends LightningElement {
     inputValue;
     valueField;
     keyCodeCompanentinput;
-    colorBackground;        
-   
-    optionValueHot = { hot: "Hot", show: false };
-    optionValueWarm = { warm: "Warm", show: false };
-    optionValueCold = { cold: "Cold", show: false };
-    optionValueNone = { none: "", show: false };
-    optionValueDir = { dir: "Dir", show: false };    
+    colorBackground;
+    defaultFieldValue;  
 
-    clickEditNameCompanent(event) {
+    optionValue = [
+        { value: "", show: false, showValue: "--None--"},
+        { value: "Hot", show: false, showValue: "Hot"},
+        { value: "Warm", show: false, showValue: "Warm"},
+        { value: "Cold", show: false, showValue: "Cold"},        
+        { value: "Dir", show: false, showValue: "Dir"},
+    ];
+    
+    clickButtonEditFeild(event) {
+        this.accountIdRow = event.target.dataset.id;
         this.valueField = event.target.dataset.field;
-        this.accountName = event.target.dataset.value;
-        this.accountIdRow = event.target.dataset.id;        
-        this.dispatchEvent(new CustomEvent("openinputfield", {
+        this.defaultFieldValue = event.target.dataset.value;        
+        if (this.valueField == 'Rating') {
+            this.selectStandartValue(this.defaultFieldValue);            
+        }
+        this.dispatchEvent(new CustomEvent("openeditfield", {
             detail: {
                 valueField: this.valueField,
-                accountName: this.accountName,
+                defaultFieldValue: this.defaultFieldValue,
                 accountIdRow: this.accountIdRow
             }
         }));
-    }
-    
+    }   
+
     inputDisplayCompanent(event) {
         this.inputValue = event.target.value;        
         this.keyCodeCompanentinput = event.keyCode;
@@ -53,38 +59,17 @@ export default class ComponentRowForDataTable extends LightningElement {
                 accountIdRow: this.accountIdRow                
             }
         }));
-    }
+    }    
 
-    clickEditRatingCompanent(event) {
-        this.accountRating = event.target.dataset.value;
-        this.accountIdRow = event.target.dataset.id;
-        this.valueField = event.target.dataset.field;
-        this.selectStandartValue(this.accountRating);        
-        this.dispatchEvent(new CustomEvent("clickeditratingcompanent", {
-            detail: {
-                accountRating: this.accountRating,
-                accountIdRow: this.accountIdRow                                
-            }
-        }));
-    }
-
-    selectStandartValue(show){        
-        switch(show) {           
-            case this.optionValueHot.hot:
-                this.optionValueHot.show = true;
-                break;
-            case this.optionValueWarm.warm:
-                this.optionValueWarm.show = true;
-                break;
-            case this.optionValueCold.cold:
-                this.optionValueCold.show = true;
-                break;
-            case this.optionValueDir.dir:
-                this.optionValueDir.show = true;
-                break;
-            default:
-                this.optionValueNone.show = true;
+    selectStandartValue(eddSelected) {
+        this.optionValue.map((row) => {
+            row.show = false;            
+        }); 
+        if (eddSelected == undefined) {
+            eddSelected = "";
         }
+        let editAccountFiald = this.optionValue.find(item => item.value == eddSelected);
+        editAccountFiald.show = true;       
     }
 
     clickOption(event) {        
@@ -103,6 +88,7 @@ export default class ComponentRowForDataTable extends LightningElement {
             }));
         }        
     }
+
     keyUpPickList(event) {         
         this.keyCodeCompanentinput = event.keyCode;        
         this.dispatchEvent(new CustomEvent("closeescpicklist", {

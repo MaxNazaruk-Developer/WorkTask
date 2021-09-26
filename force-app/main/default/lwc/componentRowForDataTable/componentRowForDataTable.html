@@ -2,7 +2,7 @@
         <td class="slds-cell-edit slds-table_edit onerd" role="gridcell">
             <span if:false={accountEditRow} class="slds-grid slds-grid_align-spread">
               <span class="slds-truncate" title="Acme">{accountName}</span>
-              <button if:true={showEditButton} onclick={clickEditNameCompanent} data-value={accountName} data-id={accountIdRow} data-field='Name' class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
+              <button if:true={showEditButton} onclick={clickButtonEditFeild} data-value={accountName} data-id={accountIdRow} data-field='Name' class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
                 <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
                     <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>
                 </svg>                            
@@ -11,14 +11,14 @@
             <div if:true={accountEditRow} class="slds-form-element">
                 <label class="slds-form-element__label" for="text-input-id-184">Input Label</label>
                 <div class="slds-form-element__control">
-                  <input type="text" onkeyup={inputDisplayCompanent} placeholder="" class="slds-input" value={inputValue} />
+                  <input type="text" onkeyup={inputDisplayCompanent} placeholder="" class="slds-input" value={defaultFieldValue} />
                 </div>
             </div>
         </td>
         <td class="slds-cell-edit tword" role="gridcell">
             <span if:false={accountshowPickList} class="slds-grid slds-grid_align-spread">
               <span class="slds-truncate" title="Acme">{accountRating}</span>             
-              <button if:true={showEditButton} data-value={accountRating} data-id={accountIdRow} data-field='Rating' onclick={clickEditRatingCompanent} class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
+              <button if:true={showEditButton} data-value={accountRating} data-id={accountIdRow} data-field='Rating' onclick={clickButtonEditFeild} class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1">
                 <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
                     <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>                                
                 </svg>                           
@@ -27,14 +27,12 @@
             <div if:true={accountshowPickList} class="slds-form-element">
               <label class="slds-form-element__label" for="select-01">Select Label</label>
               <div class="slds-form-element__control">
-                <div class="slds-select_container">                  
-                  <select autofocus onkeyup={keyUpPickList} onclick={clickOption} class="slds-select" >
-                    <option value={optionValueNone.none} selected={optionValueNone.show}>-None-</option>
-                    <option value={optionValueHot.hot} selected={optionValueHot.show}>{optionValueHot.hot}</option>
-                    <option value={optionValueWarm.warm} selected={optionValueWarm.show}>{optionValueWarm.warm}</option>
-                    <option value={optionValueCold.cold} selected={optionValueCold.show}>{optionValueCold.cold}</option>
-                    <option value={optionValueDir.dir} selected={optionValueDir.show}>{optionValueDir.dir}</option>
-                  </select>
+                <div class="slds-select_container">
+                  <select onkeyup={keyUpPickList} onclick={clickOption} class="slds-select">
+                    <template for:each={optionValue} for:item="row">
+                      <option key={row.value} value={row.value} selected={row.show}>{row.showValue}</option>
+                    </template>
+                  </select>                  
                 </div>
               </div>
             </div>            
