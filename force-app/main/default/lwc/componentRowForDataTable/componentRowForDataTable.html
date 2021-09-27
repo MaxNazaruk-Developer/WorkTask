@@ -9,7 +9,7 @@
               </button>                                                  
             </span>
             <div if:true={accountEditRow} class="slds-form-element">
-                <label class="slds-form-element__label" for="text-input-id-184">Input Label</label>
+                <label class="slds-form-element__label" for="text-input-id-184">Enter new account name</label>
                 <div class="slds-form-element__control">
                   <input type="text" onkeyup={inputDisplayCompanent} placeholder="" class="slds-input" value={defaultFieldValue} />
                 </div>
@@ -25,7 +25,7 @@
               </button>
             </span>
             <div if:true={accountshowPickList} class="slds-form-element">
-              <label class="slds-form-element__label" for="select-01">Select Label</label>
+              <label class="slds-form-element__label" for="select-01">Select a new value for rating</label>
               <div class="slds-form-element__control">
                 <div class="slds-select_container">
                   <select onkeyup={keyUpPickList} onclick={clickOption} class="slds-select">
